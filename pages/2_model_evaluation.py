@@ -119,9 +119,15 @@ fig_single.add_trace(
 )
 if model_lstm:
     fig_single.add_trace(
-        go.Scatter(x=timestamps, y=lstm_predictions, mode='lines+markers', name='Custom LSTM Net',
-                   line=dict(color='#00ffff', width=2, size=4))
+    go.Scatter(
+        x=timestamps, 
+        y=lstm_predictions, 
+        mode='lines+markers', 
+        name='Custom LSTM Net',
+        line=dict(color='#00ffff', width=2),
+        marker=dict(size=4)
     )
+)
 fig_single.add_trace(
     go.Scatter(x=timestamps, y=lstm_predictions, mode='lines+markers',
                line=dict(color='#00ffff', width=2),  # ✅ 宽度控制
