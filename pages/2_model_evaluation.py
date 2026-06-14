@@ -123,8 +123,9 @@ if model_lstm:
                    line=dict(color='#00ffff', width=2, size=4))
     )
 fig_single.add_trace(
-    go.Scatter(x=timestamps, y=baseline_predictions, mode='lines', name='Historical Average Base',
-               line=dict(color='#ff7f0e', width=1.5, dash='dot'))
+    go.Scatter(x=timestamps, y=lstm_predictions, mode='lines+markers',
+               line=dict(color='#00ffff', width=2),  # ✅ 宽度控制
+               marker=dict(size=4))                  # ✅ 大小控制放到 marker 里
 )
 fig_single.update_layout(
     title=dict(text=f"Dynamic Flow Tracking for Zone {selected_zone}", font=dict(size=16)),
