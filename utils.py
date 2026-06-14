@@ -65,30 +65,28 @@ def load_model_metrics():
     return eval_df, baseline_df
 
 
-@st.cache_resource(show_spinner="🧠 Initializing Neural Network Runtime (Keras 3)...")
+@st.cache_resource
 def load_lstm_models():
     """
-    利用 cache_resource 保持 5 个区域的神经网络权重常驻内存，避免重复 I/O 导致网页卡死
+    真正的神经网络加载器：
+    利用缓存常驻内存，加载 5 个核心区域的 LSTM 真实权重。
     """
-    os.environ["KERAS_BACKEND"] = "tensorflow"
-    try:
-        import tensorflow as tf
-    except ModuleNotFoundError:
-        import tf_keras as tf  # 💡 完美兼容：当云端缺少 tensorflow 时自动桥接到 tf-keras
-
+    import tensorflow as tf
+    import os
+    
     base_dir = os.path.dirname(os.path.abspath(__file__))
     models = {}
-    progress_text = st.empty()
-
-    for i, z in enumerate(TOP_ZONES):
-        path = os.path.join(base_dir, "data", "models", f"lstm_zone_{z}.keras")
-        if os.path.exists(path):
-            try:
-                progress_text.info(f"🔄 Loading Custom LSTM Framework for Zone {z}... ({i + 1}/{len(TOP_ZONES)})")
-                models[z] = tf.keras.models.load_model(path)
-            except Exception as e:
-                st.warning(f"⚠️ Failed to load model for Zone {z}: {str(e)}")
-    progress_text.empty()
+    target_zones = [132, 161, 162, 236, 237]
+    
+    for zone in target_zones:
+        # 寻找你本地训练好上传的 .keras 或 .h5 模型文件
+        model_path = os.path.join(base_dir, "models", f"lstm_zone_{zone}.keras")
+        if os.path.exists(model_path):
+            models[zone] = tf.keras.models.load_model(model_path)
+        else:
+            # 如果云端路径有变，自动兼容标准加载
+            models[zone] = tf.keras.models.load_model(f"data/models/lstm_zone_{zone}.keras")
+            
     return models
 
 
