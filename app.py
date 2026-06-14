@@ -58,17 +58,3 @@ st.sidebar.info("💡 Select function from the menu above to start exploring.")
 # ---------------------- Main Welcome Page ----------------------
 st.title("🚗 Welcome to Traffic Prediction Platform")
 st.markdown(f"Hello **{st.session_state.current_user}**, please use the sidebar to navigate through the platform features.")
-# =====================================================================
-# 5. 【2026 新版特供】强制拉起多页面现代侧边栏路由器
-# =====================================================================
-# 告诉 Streamlit 你的子页面都在哪里，强制让它渲染侧边栏菜单
-pg = st.navigation([
-    st.Page("app.py", title="🏠 Home Welcome", icon="🏠"),
-    st.Page("pages/1_model_training.py", title="⚙️ Model Training Sandbox", icon="⚙️"),
-    st.Page("pages/2_model_evaluation.py", title="📈 Model Evaluation Analytics", icon="📈"),
-    st.Page("pages/3_topic_visualization.py", title="🔥 Spatio-Temporal Attention", icon="🔥"),
-    st.Page("pages/4_traffic_info.py", title="🌤️ Traffic & Weather Intel", icon="🌤️")
-])
-
-# 启动路由器（必须执行这行，大屏才会渲染）
-pg.run()
