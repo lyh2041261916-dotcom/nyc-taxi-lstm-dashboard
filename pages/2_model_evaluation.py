@@ -128,11 +128,6 @@ if model_lstm:
         marker=dict(size=4)
     )
 )
-fig_single.add_trace(
-    go.Scatter(x=timestamps, y=lstm_predictions, mode='lines+markers',
-               line=dict(color='#00ffff', width=2),  # ✅ 宽度控制
-               marker=dict(size=4))                  # ✅ 大小控制放到 marker 里
-)
 fig_single.update_layout(
     title=dict(text=f"Dynamic Flow Tracking for Zone {selected_zone}", font=dict(size=16)),
     xaxis_title="Timeline Step", yaxis_title="Passenger Pickups / Hour",
