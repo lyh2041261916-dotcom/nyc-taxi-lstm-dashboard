@@ -1,8 +1,0 @@
-streamlit
-tensorflow-cpu
-pandas
-numpy
-scikit-learn
-plotly
-matplotlib
-seaborn
