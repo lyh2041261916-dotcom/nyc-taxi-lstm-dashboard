@@ -71,7 +71,10 @@ def load_lstm_models():
     利用 cache_resource 保持 5 个区域的神经网络权重常驻内存，避免重复 I/O 导致网页卡死
     """
     os.environ["KERAS_BACKEND"] = "tensorflow"
-    import tensorflow as tf  # 延迟加载，防止在某些环境中阻塞进程
+    try:
+        import tensorflow as tf
+    except ModuleNotFoundError:
+        import tf_keras as tf  # 💡 完美兼容：当云端缺少 tensorflow 时自动桥接到 tf-keras
 
     base_dir = os.path.dirname(os.path.abspath(__file__))
     models = {}
