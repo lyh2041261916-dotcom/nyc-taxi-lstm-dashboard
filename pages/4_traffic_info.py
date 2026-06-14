@@ -34,12 +34,11 @@ st.subheader("🛠️ Fleet Dispatcher Matrix Control (Dynamic CRUD)")
 st.markdown(
     "Modify values below to simulate real-time severe weather impacts or lane blockages. Downstream visualization maps respond instantly.")
 
-# 通过 key 绑定让 Streamlit 原生处理状态变更，完美解决按钮保存延迟的缺陷
+# 💡 修复：2026新规改用 width='stretch'
 edited_df = st.data_editor(
     st.session_state.roads,
     width='stretch',
     num_rows="dynamic",
-    use_container_width=True,
     key="road_editor_matrix"
 )
 
@@ -51,7 +50,7 @@ if st.button("💾 Apply & Sync Environmental Metrics", type="primary"):
 st.divider()
 
 # =====================================================================
-# 4. 【核心修复】高级感知型多列卡片流渲染引擎
+# 4. 高级感知型多列卡片流渲染引擎
 # =====================================================================
 st.subheader("🎛️ Live Dispatched Corridor Status Cards")
 
@@ -60,23 +59,16 @@ if st.session_state.roads.empty:
 else:
     cols = st.columns(3)
 
-    # 💡 【核心修复】使用 enumerate 抽离出绝对连续的计数器 i，彻底砸碎因动态删减行导致 idx 断层引发的溢出崩溃
     for i, (idx, row) in enumerate(st.session_state.roads.iterrows()):
         with cols[i % 3]:
-            # 用 st.chat_message("ambient") 或 card 样式做精美背景包裹
             with st.container(border=True):
-
-                # 💡 【高阶亮点】根据风险等级（Risk Level）动态渲染高级彩色边框及状态标签
                 risk = str(row['Risk_Level']).strip().lower()
                 if risk == 'high':
                     status_badge = "🔴 **HIGH RISK**"
-                    bg_color = "🔴"
                 elif risk == 'medium':
                     status_badge = "🟡 **MEDIUM RISK**"
-                    bg_color = "🟡"
                 else:
                     status_badge = "🟢 **LOW RISK**"
-                    bg_color = "🟢"
 
                 st.markdown(f"### 🛣️ {row['Road_Name']}")
                 st.markdown(f"**Security Guard Status**: {status_badge}")
@@ -90,7 +82,6 @@ else:
                 )
 
                 st.markdown("---")
-                # 提示文字加粗醒目高亮
                 st.markdown(f"🚨 **Action Suggestion**: \n `{row['Suggestion']}`")
 
 st.divider()
@@ -111,9 +102,20 @@ if not st.session_state.roads.empty:
     # 执行过滤器查询
     filtered_df = st.session_state.roads[st.session_state.roads['Risk_Level'].isin(risk_filter)]
 
+    # 💡 核心修复：彻底抛弃依赖 matplotlib 的 background_gradient
+    # 改用 Streamlit 自带的、更现代的 st.column_config.ProgressColumn，优雅实现能见度（Visibility）的进度条可视化高亮！
     st.dataframe(
-        filtered_df.style.background_gradient(cmap="YlOrRd", subset=['Visibility_km']),
-        use_container_width=True
+        filtered_df,
+        width='stretch',
+        column_config={
+            "Visibility_km": st.column_config.ProgressColumn(
+                "Optical Visibility (km)",
+                help="The visibility distance formatted dynamically",
+                format="%d km",
+                min_value=0,
+                max_value=15,
+            )
+        }
     )
 else:
     st.caption("No data to execute queries against.")
